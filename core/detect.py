@@ -5,10 +5,21 @@ import torch.nn as nn
 from tqdm import tqdm
 import torch.optim as optim
 from sklearn import metrics
+from repr import Repr
 from matplotlib import pyplot as plt
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader, TensorDataset
 
 
 torch.manual_seed(60)
+
+def dataloader(x, y):
+    X_train, Xs, y_train, ys = train_test_split(np.array(x), np.array(y), train_size = 0.8, random_state = 1)
+    X_val, X_test, y_val, y_test = train_test_split(Xs, ys, test_size = 0.5, random_state = 1)
+    loader_train = DataLoader(TensorDataset(torch.from_numpy(X_train), torch.from_numpy(np.array(y_train))), shuffle = True, batch_size = 32)
+    loader_val = DataLoader(TensorDataset(torch.from_numpy(X_val), torch.from_numpy(np.array(y_val))), shuffle = True, batch_size = 32)
+    loader_test = DataLoader(TensorDataset(torch.from_numpy(X_test), torch.from_numpy(np.array(y_test))), shuffle = True, batch_size = 32)
+    return loader_train, loader_val, loader_test
 
 class HCCD(nn.Module):
     def __init__(self):
@@ -29,14 +40,16 @@ class HCCD(nn.Module):
     def forward(self, x):
         return self.model(x)
 
-class Train:
+class Train(Repr):
     def __init__(self):
+        super().__init__()
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.HCCD = HCCD().to(self.device)
         self.training_loss = []
         self.validation_loss = []
         # self.optimizer = optim.Adam(self.HCCD.parameters(), lr =  1e-3, betas = (0.9, 0.999)) # bert
         self.optimizer = optim.Adam(self.HCCD.parameters(), lr =  1e-5, betas = (0.9, 0.999)) # gpt
+        self.loader_train, self.loader_val, self.loader_test =  dataloader(self._get_gpt_hidden_states(), self._get_data_labs())
 
     def train_(self, epochs):
         loss_criterion = nn.CrossEntropyLoss()
@@ -44,7 +57,7 @@ class Train:
         print(">_ training")
         for epoch in range(epochs):
             self.HCCD.train()
-            for idx, batch in tqdm(enumerate(loader_train, 0)):
+            for idx, batch in tqdm(enumerate(self.loader_train, 0)):
                 embeddings, labels = batch
                 self.optimizer.zero_grad()
                 outputs = self.HCCD(embeddings.to(self.device))
@@ -56,7 +69,7 @@ class Train:
                 print(train_loss.item())
                 
             self.HCCD.eval()
-            for idx, batch in tqdm(enumerate(loader_val, 0)):
+            for idx, batch in tqdm(enumerate(self.loader_val, 0)):
                 embeddings, labels = batch
                 outputs = self.HCCD(embeddings.to(self.device))
                 valid_loss = loss_criterion(outputs, labels.to(self.device))
@@ -77,7 +90,7 @@ class Train:
         self.HCCD.eval()
         start_time = time.time()
         with torch.no_grad():
-            for embeddings, labels in loader_test:
+            for embeddings, labels in self.loader_test:
                 outputs = self.HCCD(embeddings.float().to(self.device))
                 labels = labels.to(self.device)
                 _, predictions = torch.max(outputs.data, 1)            

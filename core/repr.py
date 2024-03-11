@@ -12,14 +12,17 @@ class Repr(Dataset):
 
 	def _repr_model(self, sequence, model_type, model_name, use_cuda, batch_n = 32):
 		model_args = ModelArgs(num_train_epochs = 4)
-		vectors = []
+		hidden_states = []
 		model = RepresentationModel(model_type = model_type, model_name = model_name, args = model_args, use_cuda = use_cuda)
 		for x in self._batch(sequence, batch_n):
-			vectors.append(model.encode_sentences(x, combine_strategy = "mean", batch_size = len(x)))
-		return [i for vector in vectors for i in vector]
+			hidden_states.append(model.encode_sentences(x, combine_strategy = "mean", batch_size = len(x)))
+		return [i for vector in hidden_states for i in vector]
 	
-	def bert_repr(self):
-		return self._repr_model(self.get_data(), "bert", "bert-base-uncased", True) 
+	def _get_bert_hidden_states(self):
+		return self._repr_model(self.get_data(), "bert", "bert-base-uncased", False) 
 	
-	def gpt_repr(self):
+	def _get_gpt_hidden_states(self):
 		return self._repr_model(self.get_data(), "gpt2", "gpt2", True)
+	
+	def _get_labels(self):
+		return self.get_data_labs()
