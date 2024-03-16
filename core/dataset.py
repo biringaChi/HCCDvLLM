@@ -1,4 +1,3 @@
-
 class Dataset:
 	def __init__(self) -> None:
 		self.hcc = "hcc"
@@ -55,10 +54,10 @@ class Dataset:
 	def _get_others_labs(self):
 		return [7 for _ in range(len(self._get_others()))]
 	
-	def get_data(self):
+	def _get_data(self):
 		return self._get_passwords() + self._get_generic_secrets() + self._get_private_keys() + self._get_generic_tokens() + \
 		self._get_predefined_patterns() + self._get_auth_key_tokens() + self._get_seed_salt_nonces() + self._get_others()
 	
-	def _get_data_labs(self):
-		return self._get_password_labs() + self._get_generic_secrets_labs() + self._get_private_keys_labs() + self._get_generic_tokens_labs() + \
+	def _get_labels(self):
+		return self._get_passwords_labs() + self._get_generic_secrets_labs() + self._get_private_keys_labs() + self._get_generic_tokens_labs() + \
 		self._get_predefined_patterns_labs() + self._get_auth_key_tokens_labs() + self._get_seed_salt_nonces_labs() + self._get_others_labs()
