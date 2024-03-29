@@ -1,3 +1,5 @@
+Artifact Author: ```Chidera Biringa```
+
 Installation
 ```
 git clone https://github.com/biringaChi/M2
@@ -8,7 +10,7 @@ Dependencies
 pip install -r requirements.txt
 ```
 
-Core directory
+Core
 ```
 cd core
 ```
