@@ -1,5 +1,7 @@
 Artifact Author: ```Chidera Biringa```
 
+---
+
 Installation
 ```
 git clone https://github.com/biringaChi/M2

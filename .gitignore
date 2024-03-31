@@ -159,14 +159,15 @@ Vulnerable Apps Summary.pdf
 experiments.ipynb
 cade.ipynb
 
-password.pkl
-private_key.pkl
-generic_secret.pkl
-generic_token.pkl
-predefined_pattern.pkl
-auth_key_token.pkl
-seed_salt_nonce.pkl
-other.pkl
+# password.pkl
+# private_key.pkl
+# generic_secret.pkl
+# generic_token.pkl
+# predefined_pattern.pkl
+# auth_key_token.pkl
+# seed_salt_nonce.pkl
+# other.pkl
+
 # *.ipynb
 SPECDET-scratch_nn.ipynb
 neg_obs1.pkl
